@@ -20,7 +20,7 @@ passport.use(
     {
       clientID: keys.googleClientID,
       clientSecret: keys.googleClientSecret,
-      callbackURL: '/auth/google/callback',
+      callbackURL: 'https://emaily-v89q.onrender.com/auth/google/callback',
       proxy: true,
     },
     (accessToken, refreshToken, profile, done) => {
