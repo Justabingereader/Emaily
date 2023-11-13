@@ -15,23 +15,25 @@ passport.deserializeUser((id, done) => {
 });
 
 passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID, // Make sure this is properly set in your keys file or environment variables
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Make sure this is properly set in your keys file or environment variables
-        callbackURL: '/auth/google/callback',
-        proxy: true,
-      },
-      (accessToken, refreshToken, profile, done) => {
-        User.findOne({ googleId: profile.id }).then((existingUser) => {
-          if (existingUser) {
-            done(null, existingUser);
-          } else {
-            new User({ googleId: profile.id })
-              .save()
-              .then((user) => done(null, user));
-          }
-        });
-      }
-    )
-  );
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: '/auth/google/callback',
+      proxy: true,
+    },
+    (accessToken, refreshToken, profile, done) => {
+      User.findOne({ googleId: profile.id }).then((existingUser) => {
+        if (existingUser) {
+          // we already have a record with the given profile ID
+          done(null, existingUser);
+        } else {
+          // we don't have a user record with this ID, make a new record!
+          new User({ googleId: profile.id })
+            .save()
+            .then((user) => done(null, user));
+        }
+      });
+    }
+  )
+);
